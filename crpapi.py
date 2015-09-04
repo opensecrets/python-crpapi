@@ -1,10 +1,10 @@
 """ 
-	Python library for interacting with the CRP API.
+    Python library for interacting with the CRP API.
 
     The CRP API (http://www.opensecrets.org/action/api_doc.php) provides campaign 
-	finance and other data from the Center for Responsive Politics.
+    finance and other data from the Center for Responsive Politics.
 
-	See README.rst for methods and usage
+    See README.rst for methods and usage
 """
 
 __author__ = "James Turk (jturk@sunlightfoundation.com)"
@@ -37,11 +37,14 @@ class CRP(object):
         if CRP.apikey is None:
             raise CRPApiError('Missing CRP apikey')
 
-        url = 'http://api.opensecrets.org/?method=%s&output=json&apikey=%s&%s' % \
+        url = 'http://www.opensecrets.org/api/?method=%s&output=json&apikey=%s&%s' % \
               (func, CRP.apikey, urllib.urlencode(params))
-        
+
+        headers = { 'User-Agent' : 'Mozilla/5.0' }
+        req = urllib2.Request(url, None, headers)        
+
         try:
-            response = urllib2.urlopen(url).read()
+            response = urllib2.urlopen(req).read()
             return json.loads(response)['response']
         except urllib2.HTTPError, e:
             raise CRPApiError(e.read())
