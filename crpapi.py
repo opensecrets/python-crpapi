@@ -37,7 +37,7 @@ class CRP(object):
         if CRP.apikey is None:
             raise CRPApiError('Missing CRP apikey')
 
-        url = 'http://api.opensecrets.org/?method=%s&output=json&apikey=%s&%s' % \
+        url = 'http://www.opensecrets.org/api/?method=%s&output=json&apikey=%s&%s' % \
               (func, CRP.apikey, urllib.urlencode(params))
         
         try:
