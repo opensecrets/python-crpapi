@@ -2,7 +2,7 @@ from distutils.core import setup
 from crpapi import __version__,__license__,__doc__
 
 license_text = open('LICENSE').read()
-long_description = open('README.rst').read()
+long_description = open('README.md').read()
 
 setup(name="python-crpapi",
       version=__version__,
@@ -22,6 +22,6 @@ setup(name="python-crpapi",
                    "Programming Language :: Python",
                    "Topic :: Software Development :: Libraries :: Python Modules",
                    ],
-       install_requires=["simplejson >= 1.8"]
+       install_requires=["requests >= 2.9"]
       )
 

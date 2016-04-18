@@ -1,7 +1,7 @@
-""" 
+"""
 	Python library for interacting with the CRP API.
 
-    The CRP API (http://www.opensecrets.org/action/api_doc.php) provides campaign 
+    The CRP API (http://www.opensecrets.org/action/api_doc.php) provides campaign
 	finance and other data from the Center for Responsive Politics.
 
 	See README.rst for methods and usage
@@ -12,11 +12,8 @@ __version__ = "0.1.0"
 __copyright__ = "Copyright (c) 2009 Sunlight Labs"
 __license__ = "BSD"
 
-import urllib, urllib2
-try:
-    import json
-except ImportError:
-    import simplejson as json
+import urllib
+import requests
 
 class CRPApiError(Exception):
     """ Exception for CRP API errors """
@@ -37,13 +34,16 @@ class CRP(object):
         if CRP.apikey is None:
             raise CRPApiError('Missing CRP apikey')
 
-        url = 'http://api.opensecrets.org/?method=%s&output=json&apikey=%s&%s' % \
-              (func, CRP.apikey, urllib.urlencode(params))
-        
+        url = 'http://www.opensecrets.org/api/' \
+            '?method=%s&output=json&apikey=%s&%s' % \
+            (func, CRP.apikey, urllib.urlencode(params))
+
+        print url
+
         try:
-            response = urllib2.urlopen(url).read()
-            return json.loads(response)['response']
-        except urllib2.HTTPError, e:
+            response = requests.get(url)
+            return response.json()['response']
+        except requests.HTTPError, e:
             raise CRPApiError(e.read())
         except (ValueError, KeyError), e:
             raise CRPApiError('Invalid Response')
@@ -95,15 +95,33 @@ class CRP(object):
         def get(**kwargs):
             results = CRP._apicall('getOrgs', kwargs)['organization']
             return results
-            
+
     class orgSummary(object):
         @staticmethod
         def get(**kwargs):
             results = CRP._apicall('orgSummary', kwargs)['organization']
             return results
-            
+
     class congCmteIndus(object):
         @staticmethod
         def get(**kwargs):
             results = CRP._apicall('congCmteIndus', kwargs)['committee']['member']
+            return results
+
+    class presCandContrib(object):
+        @staticmethod
+        def get(**kwargs):
+            results = CRP._apicall('prescandContrib', kwargs)
+            return results
+
+    class presCandIndustry(object):
+        @staticmethod
+        def get(**kwargs):
+            results = CRP._apicall('prescandIndustry', kwargs)
+            return results
+
+    class presCandSector(object):
+        @staticmethod
+        def get(**kwargs):
+            results = CRP._apicall('prescandSector', kwargs)
             return results
