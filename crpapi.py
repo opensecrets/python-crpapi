@@ -4,7 +4,7 @@
     The CRP API (http://www.opensecrets.org/action/api_doc.php) provides campaign 
 	finance and other data from the Center for Responsive Politics.
 
-	See README.rst for methods and usage
+	See README.md for methods and usage
 """
 
 __author__ = "James Turk (jturk@sunlightfoundation.com)"
@@ -12,11 +12,9 @@ __version__ = "0.1.0"
 __copyright__ = "Copyright (c) 2009 Sunlight Labs"
 __license__ = "BSD"
 
-import urllib, urllib2
-try:
-    import json
-except ImportError:
-    import simplejson as json
+import urllib
+import json
+import requests
 
 class CRPApiError(Exception):
     """ Exception for CRP API errors """
@@ -36,16 +34,14 @@ class CRP(object):
     def _apicall(func, params):
         if CRP.apikey is None:
             raise CRPApiError('Missing CRP apikey')
-
-        url = 'http://api.opensecrets.org/?method=%s&output=json&apikey=%s&%s' % \
-              (func, CRP.apikey, urllib.urlencode(params))
+        url = f"http://www.opensecrets.org/api/?method={func}&output=json%apikey={CRP.apikey}&{urllib.parse.urlencode(params)}"
         
         try:
-            response = urllib2.urlopen(url).read()
+            response = requests.get(url).content
             return json.loads(response)['response']
-        except urllib2.HTTPError, e:
+        except (urllib2.HTTPError, e):
             raise CRPApiError(e.read())
-        except (ValueError, KeyError), e:
+        except ((ValueError, KeyError), e):
             raise CRPApiError('Invalid Response')
 
     class getLegislators(object):
